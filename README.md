@@ -1,104 +1,72 @@
-# 🌐 Unternehmensnetzwerk-Architektur (FISI Portfolio)
+# Cisco Enterprise Network – VLANs & Inter-VLAN Routing
 
-Dieses Projekt demonstriert die Planung, Segmentierung und Konfiguration einer strukturierten Netzwerk-Infrastruktur für ein kleines bis mittleres Unternehmen (KMU) mittels **Cisco Packet Tracer**.
+## Projektbeschreibung
 
----
+In diesem Projekt habe ich mit Cisco Packet Tracer ein kleines Unternehmensnetzwerk geplant, aufgebaut und konfiguriert. Ziel war es, verschiedene Abteilungen mithilfe von VLANs logisch voneinander zu trennen und die Kommunikation zwischen den Netzwerken über Inter-VLAN-Routing zu ermöglichen.
 
-## 📐 Netzwerk-Topologie & Segmentierung (VLANs)
+Das Projekt dient dazu, meine praktischen Kenntnisse im Bereich Netzwerktechnik und meine Vorbereitung auf die Ausbildung zum Fachinformatiker für Systemintegration zu dokumentieren.
 
-Das Netzwerk ist logisch in verschiedene VLANs unterteilt, um Sicherheit, Broadcast-Kontrolle und Performance zu optimieren.
+## Verwendete Technologien
 
-| VLAN ID | Name | Subnetz | Gateway | Beschreibung |
-|---|---|---|---|---|
-| **VLAN 10** | Verwaltung | `192.168.10.0/24` | `192.168.10.1` | Arbeitsplätze für Verwaltung & Buchhaltung |
-| **VLAN 20** | IT-Abteilung | `192.168.20.0/24` | `192.168.20.1` | IT-Administration & Entwicklung |
-| **VLAN 30** | Produktion | `192.168.30.0/24` | `192.168.30.1` | Produktion & Logistik |
-| **VLAN 99** | DMZ / Server | `192.168.99.0/24` | `192.168.99.1` | Zentrale Dienste (Web/DNS) |
+- Cisco Packet Tracer
+- Cisco Router und Switch
+- VLAN-Konfiguration
+- IEEE 802.1Q-Trunking
+- Inter-VLAN-Routing (Router-on-a-Stick)
+- IPv4-Adressierung und Standard-Gateways
+- Netzwerkdiagnose mit `ping`
 
----
+## Netzwerkstruktur
 
-## 🛠️ Implementierte Technologien & Funktionen
+| VLAN | Abteilung | Netzwerk | Gateway |
+|---|---|---|---|
+| 10 | Verwaltung | `192.168.10.0/24` | `192.168.10.1` |
+| 20 | IT-Abteilung | `192.168.20.0/24` | `192.168.20.1` |
+| 30 | Produktion | `192.168.30.0/24` | `192.168.30.1` |
+| 99 | Server | `192.168.99.0/24` | `192.168.99.1` |
 
-- **IEEE 802.1Q VLAN Trunking:** Logische Trennung der Abteilungen über einen zentralen Switch (`Switch-Main`).
-- **Inter-VLAN Routing (Router-on-a-Stick):** Konfiguration von Sub-Interfaces auf dem Cisco-Router (`Router-Core`).
-- **Zentrale Dienste (DNS & Webserver):** Interner Webserver erreichbar unter `www.firma-netzwerk.de` (`192.168.99.10`).
-- **DHCP-Konfiguration:** Automatische IP-Vergabe für die Client-Netzwerke.
+## Technische Umsetzung
 
----
+- Vier VLANs für unterschiedliche Abteilungen und den Serverbereich erstellt
+- Switch-Ports den entsprechenden VLANs zugeordnet
+- 802.1Q-Trunk zwischen Switch und Router eingerichtet
+- Router-Subinterfaces für das Inter-VLAN-Routing konfiguriert
+- IPv4-Adressen und Standard-Gateways für die Endgeräte eingerichtet
+- Konnektivität zwischen den VLANs mit `ping` überprüft
 
-## ⚙️ Konfigurationsauszug (Cisco CLI)
+## Netzwerktopologie
 
-### Switch Configuration (`Switch-Main`):
-```cisconetwork
-enable
-configure terminal
-hostname Switch-Main
+![Netzwerktopologie](screenshots/network-topology.png)
 
-! VLANs erstellen
-vlan 10
- name Verwaltung
-vlan 20
- name IT-Abteilung
-vlan 30
- name Produktion
-vlan 99
- name Servers
-exit
+## Testergebnisse
 
-! Access Ports
-interface FastEthernet0/10
- switchport mode access
- switchport access vlan 10
- exit
+Die folgenden Verbindungen wurden erfolgreich mit `ping` getestet:
 
-interface FastEthernet0/4
- switchport mode access
- switchport access vlan 99
- exit
+- PC-Verwaltung → Gateway `192.168.10.1`
+- PC-Verwaltung → PC-IT `192.168.20.12`
+- PC-Produktion → PC-Verwaltung `192.168.10.11`
+- PC-Verwaltung → Server `192.168.99.10`
+- Server → Gateway `192.168.99.1`
 
-! Trunk Port zum Router
-interface GigabitEthernet0/1
- switchport mode trunk
- switchport trunk allowed vlan 10,20,30,99
- exit
-```
+### Ping-Test zum Server
 
-### Router Configuration (`Router-Core`):
-```cisconetwork
-enable
-configure terminal
-hostname Router-Core
+![Ping-Test zum Server](screenshots/ping-server.png)
 
-interface GigabitEthernet0/0
- no shutdown
- exit
+## VLAN-Konfiguration
 
-! Inter-VLAN Sub-Interfaces
-interface GigabitEthernet0/0.10
- encapsulation dot1Q 10
- ip address 192.168.10.1 255.255.255.0
- exit
+![VLAN-Konfiguration](screenshots/vlan-configuration.png)
 
-interface GigabitEthernet0/0.99
- encapsulation dot1Q 99
- ip address 192.168.99.1 255.255.255.0
- exit
+## Trunk-Konfiguration
 
-! DHCP Pool
-ip dhcp pool POOL_VLAN10
- network 192.168.10.0 255.255.255.0
- default-router 192.168.10.1
- dns-server 192.168.99.10
- exit
-```
+![Trunk-Konfiguration](screenshots/trunk-configuration.png)
 
----
+## Projektdateien
 
-## 📁 Dateistruktur
+- `cisco-enterprise-network-fisi-final.pkt` – Packet-Tracer-Projektdatei
+- `screenshots/` – Screenshots der Netzwerktopologie, Konfigurationen und Tests
 
-- `enterprise_network.pkt` - Cisco Packet Tracer Projektdatei.
-- `topology.png` - Netzwerkdiagramm / Screenshot.
-- `README.md` - Projektdokumentation.
+## Was ich gelernt habe
 
----
-**Ziel:** Portfolio für Bewerbungen zur Ausbildung als *Fachinformatiker für Systemintegration (FISI)*.
+Durch dieses Projekt habe ich praktische Erfahrungen mit VLANs, 802.1Q-Trunking, IPv4-Adressierung, Inter-VLAN-Routing und der systematischen Fehlersuche in Netzwerken gesammelt.
+
+Ich möchte diese Kenntnisse während meiner Ausbildung zum Fachinformatiker für Systemintegration weiter vertiefen.
