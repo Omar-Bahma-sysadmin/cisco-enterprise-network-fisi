@@ -62,7 +62,7 @@ Die folgenden Verbindungen wurden erfolgreich mit `ping` getestet:
 
 ## Projektdateien
 
-- `cisco-enterprise-network-fisi-final.pkt` – Packet-Tracer-Projektdatei
+- `enterprise_network_fixed.pkt-fisi-final.pkt` – Packet-Tracer-Projektdatei
 - `screenshots/` – Screenshots der Netzwerktopologie, Konfigurationen und Tests
 
 ## Was ich gelernt habe
